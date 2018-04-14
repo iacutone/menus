@@ -1,0 +1,96 @@
+body {
+  margin: 0px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.hamburger-items a {
+  background-color: #3D353F;
+  color: white;
+  padding: 14px 25px;
+  text-decoration: none;
+  margin-right: 5px;
+  margin-left: 10px;
+}
+
+.hamburger-items a:hover {
+  background-color: #2A353F;
+}
+
+.header-img {
+  max-height: 120px;
+  width: auto;
+  padding: 10px;
+}
+
+.hamburger {
+  padding: 10px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.hamburger:hover {
+  color: red;
+}
+
+.about, .contact {
+  max-width: 50%;
+  background-color: white;
+  opacity: 0.7;
+  padding: 10px;
+}
+
+.menus, .dishes {
+  padding: 10px;
+}
+
+.menus a {
+  background-color: #3D353F;
+  color: white;
+  padding: 14px 25px;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.dish {
+  max-width: 50%;
+  background-color: white;
+  opacity: 0.7;
+  padding: 10px;
+}
+
+.img {
+  min-height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+footer {
+  font-color: #3D353F;
+  min-height: 60px;
+  width: 100%;
+  bottom: 0px;
+  position: absolute;
+}
+
+.social-media-icon {
+  padding: 5px;
+}
+
+.footer {
+  text-align: center;
+  padding: 5px;
+}
+
+.footer a {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.footer a:hover {
+  color: red;
+}
+

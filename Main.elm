@@ -3,41 +3,248 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, onClick, onInput)
+import Markdown exposing (toHtml)
 
 -- MSG
 
 type Msg
-    = None
+    = DisplayHamburgerItems
+    | DisplayInfo String
+    | ActiveMenu String
+    | None
 
 -- MODEL
 
 type alias Model = 
     { background_photo: String
+    , header_img: String
+    , sidebar_color: String
+    , footer_color: String
+    , contact_info: ContactInfo
+    , hamburger_open: Bool
+    , display_hamburger: List String
+    , about: String
+    , display_about: Bool
+    , display_contact: Bool
+    , display_menus: Bool
+    , menus: List Menu
+    , menu_dishes: Maybe Menu
     }
 
-type alias Menu = {}
+type alias Menu =
+    { name: String
+    , dishes: Maybe (List Dish)
+    }
 
-type alias Dish = {}
+type alias Dish =
+    { name: String
+    , description: Maybe String
+    , photo: Maybe String
+    }
 
-type alias ContactInfo = {}
+type alias ContactInfo =
+    { address: String
+    , city: String
+    , state: String
+    , zip: String
+    , hours: String
+    , phone: String
+    , instagram: String
+    , facebook: String
+    }
 
 initialModel : Model
-initialModel = { background_photo = "photos/3-23-2018.JPG" }
+initialModel = 
+    { background_photo = "photos/3-23-2018.JPG" 
+    , header_img = "photos/garleek.png"
+    , footer_color = "#F4FFFC"
+    , sidebar_color = "#3F3E40"
+    , contact_info = info
+    , hamburger_open = False
+    , display_hamburger = []
+    , about = """
+Chef Tsering Phuntsok has experience in both western and eastern cuisine. Before professionally studying the art of cooking, young Tsering often went to his Grandmother’s place to watch her cook. His passion began by seeing her love of cooking and, when he was old enough, his Grandma taught him her secrets’.\n
+
+Later in his youth, Tsering joined Thrangu Rinpoche’s monastery. There, he mastered traditional Tibetan cuisine. While in the monastery, Tsering traveled to both Nepal and India, quickly mastering Nepalese and Indian flavors. Then in the early 2000’s, Tsering decided to leave the monastery and move to the United States where he continued to learn his culinary skills. Furthermore, while dating his now wife, Tsering cooked regularly with her first generation Italian family to master Italian pasta and sauces.\n
+
+Tsering made his final move to Toronto in 2011 where he continued fine tuning his culinary skills and reinventing the flavors from his past. He decided to open Garleek to share his passion for food from around the world here in Toronto. You will find a unique, yet familiar, flavor in whatever dish you try at Garleek Kitchen.
+    """
+    , display_about = False
+    , display_contact = False
+    , display_menus = False
+    , menu_dishes = Nothing
+    -- , menu_dishes = Menu "Breakfast" breakfast_dishes
+    , menus = menus
+    }
+
+info = 
+    { address = "1500 Queen Street W."
+    , city = "Toronto"
+    , state = "ON"
+    , zip = "M6R 14A"
+    , hours = "8am to 9pm"
+    , phone = "416-551-0929"
+    , instagram = "https://www.instagram.com/garleekkitchen"
+    , facebook = "https://www.facebook.com/1142557119180556"
+    }
+
+menus = 
+    [ Menu "Breakfast" (Just breakfast_dishes)
+    ]
+    
+breakfast_dishes =
+    [ Dish "Potatoes" (Just "Choose either Aloo Dum (potato with gravy) or Aloo Soya (potato without gravy) - comes with your style egg, pan fried or depp fried puris (bread), and Tibetan or sweet tea.") Nothing
+    ]
 
 -- UPDATE
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        DisplayHamburgerItems ->
+            if model.hamburger_open == True then
+                let
+                    items = List.append model.display_hamburger ["About", "Contact", "Menu"]
+                in
+                    ( { model | display_hamburger = items, hamburger_open = False }, Cmd.none )
+            else
+                ( { model | display_hamburger = [], hamburger_open = True }, Cmd.none )
+
+        DisplayInfo msg ->
+            if msg == "About" then
+                ( { model | display_about = True, display_contact = False, display_menus = False }, Cmd.none )
+            else if msg == "Contact" then
+                ( { model | display_contact = True, display_about = False, display_menus = False }, Cmd.none )
+            else if msg == "Menu" then
+                ( { model | display_menus  = True, display_about = False, display_contact = False }, Cmd.none )
+            else
+                ( { model | display_menus  = False, display_about = False, display_contact = False }, Cmd.none )
+
+        ActiveMenu msg ->
+            let
+               menu = List.filter (\menu -> String.contains msg menu.name) model.menus
+               menu_items = List.head (List.map menuItems menu)
+            in
+                case menu_items of
+                    Just menu_items ->
+                        ( { model | menu_dishes = Just menu_items }, Cmd.none )
+                    Nothing ->
+                        ( { model | menu_dishes = Nothing }, Cmd.none )
+
         None ->
             ( model , Cmd.none )
+
+menuItems: Menu -> Menu
+menuItems menu =
+    Menu menu.name menu.dishes
 
 -- VIEW
 
 view : Model -> Html Msg
 view model =
-    div [] [ img [class "img", src model.background_photo][]
+    div [ class "wrapper" ] [ header [] [ img [ class "header-img", src model.header_img ] [] ] 
+    , i [ class "hamburger fa fa-bars fa-3x", onClick (DisplayHamburgerItems) ] []
+    , viewHamburgerItems model
+    , displayAbout model
+    , displayContact model
+    , displayMenuNames model
+    , displayDishes model.menu_dishes
+    , img [ class "img", src model.background_photo] []
+    , displayFooter model
     ]
+
+viewHamburgerItems: Model -> Html Msg
+viewHamburgerItems model =
+    if model.hamburger_open == False then
+        div [ class "hamburger-items" ] (List.map item model.display_hamburger)
+    else
+        div [] []
+
+item: String -> Html Msg
+item s =
+    a [ href "#", class "hamburger-item", onClick (DisplayInfo s) ] [ text s ]
+
+displayAbout: Model -> Html Msg
+displayAbout model =
+    if model.display_about == True then
+        Markdown.toHtml [ class "about" ] model.about
+    else
+        div [][]
+
+displayContact: Model -> Html Msg
+displayContact model =
+    if model.display_contact == True then
+        div [ class "contact" ] [ h1 [] [ text "Welcome!" ]
+        , div [] [ text "Please call us to place your pick-up order" ]
+        , div [] [ text model.contact_info.phone ]
+        ]
+    else
+        div [][]
+
+displayMenuNames: Model -> Html Msg
+displayMenuNames model =
+    if model.display_menus == True then
+        let
+            names = List.map .name model.menus
+        in
+            div [ class "menus" ] (List.map menuName names)
+    else
+        div [][]
+
+menuName: String -> Html Msg
+menuName name =
+    a [ href "#", class "menu", onClick (ActiveMenu name) ] [ text name ] 
+
+displayDishes: Maybe Menu -> Html Msg
+displayDishes menu =
+    case menu of
+        Just menu ->
+            let
+                dishes = menu.dishes
+            in
+                case dishes of
+                    Just dishes ->
+                        div [ class "dishes" ] (List.map dish dishes)
+                    Nothing ->
+                        div [] []
+        Nothing ->
+                div [] []
+
+dish: Dish -> Html Msg
+dish d =
+    let
+        name = d.name
+        description = dishDescription d.description
+        photo = dishPhoto d.photo
+    in
+
+        div [ class "dish" ] [ div [] [ text name ]
+        , div [] [ text description ]
+        ]
+
+dishDescription: Maybe String -> String
+dishDescription description =
+    case description of
+        Nothing ->
+            ""
+        Just description ->
+            description
+
+dishPhoto: Maybe String -> String
+dishPhoto photo =
+    case photo of
+        Nothing ->
+            ""
+        Just photo ->
+            photo
+
+displayFooter: Model -> Html Msg
+displayFooter model =
+    footer [ class "footer", style [("background-color", model.footer_color)]] [ div [] [ text model.contact_info.address]
+        , div [] [ text (model.contact_info.city ++ " " ++ model.contact_info.state ++ " " ++ model.contact_info.zip) ]
+        , div [] [ text ("Open everyday" ++ " " ++ model.contact_info.hours) ]
+        , a [ href model.contact_info.facebook ] [ i [ class "social-media-icon fa fa-facebook fa-2x" ] []]
+        , a [ href model.contact_info.instagram ] [ i [ class "social-media-icon fa fa-instagram fa-2x" ] []]]
 
 init : (Model, Cmd Msg)
 init =
