@@ -8,59 +8,67 @@ import Markdown exposing (toHtml)
 -- MSG
 
 type Msg
-    = DisplayHamburgerItems
-    | DisplayInfo String
+    = DisplayHamburgerItems Hamburger
+    | DisplayInfo Display
     | ActiveMenu String
     | None
+
+type Display
+    = About
+    | Contact
+    | Menus
+    | NoDisplay
+
+type Hamburger
+    = Open
+    | Closed
 
 -- MODEL
 
 type alias Model = 
-    { background_photo: String
-    , header_img: String
-    , sidebar_color: String
-    , footer_color: String
-    , contact_info: ContactInfo
-    , hamburger_open: Bool
-    , display_hamburger: List String
-    , about: String
-    , display_about: Bool
-    , display_contact: Bool
-    , display_menus: Bool
-    , menus: List Menu
-    , menu_dishes: Maybe Menu
+    { background_photo : String
+    , header_img : String
+    , sidebar_color : String
+    , footer_color : String
+    , contact_info : ContactInfo
+    , hamburger : Hamburger
+    , display_hamburger : List String
+    , about : String
+    , display : Display
+    , menus : List Menu
+    , menu_dishes : Maybe Menu
     }
 
 type alias Menu =
-    { name: String
-    , dishes: Maybe (List Dish)
+    { name : String
+    , dishes : Maybe (List Dish)
     }
 
 type alias Dish =
-    { name: String
-    , description: Maybe String
-    , photo: Maybe String
+    { name : String
+    , description : Maybe String
+    , photo : Maybe String
     }
 
 type alias ContactInfo =
-    { address: String
-    , city: String
-    , state: String
-    , zip: String
-    , hours: String
-    , phone: String
-    , instagram: String
-    , facebook: String
+    { address : String
+    , city : String
+    , state : String
+    , zip : String
+    , hours : String
+    , phone : String
+    , instagram : String
+    , facebook : String
     }
 
-initialModel : Model
+initialModel  : Model
 initialModel = 
     { background_photo = "photos/3-23-2018.JPG" 
     , header_img = "photos/garleek.png"
     , footer_color = "#F4FFFC"
     , sidebar_color = "#3F3E40"
     , contact_info = info
-    , hamburger_open = False
+    , hamburger = Closed
     , display_hamburger = []
     , about = """
 Chef Tsering Phuntsok has experience in both western and eastern cuisine. Before professionally studying the art of cooking, young Tsering often went to his Grandmother’s place to watch her cook. His passion began by seeing her love of cooking and, when he was old enough, his Grandma taught him her secrets’.\n
@@ -69,11 +77,8 @@ Later in his youth, Tsering joined Thrangu Rinpoche’s monastery. There, he mas
 
 Tsering made his final move to Toronto in 2011 where he continued fine tuning his culinary skills and reinventing the flavors from his past. He decided to open Garleek to share his passion for food from around the world here in Toronto. You will find a unique, yet familiar, flavor in whatever dish you try at Garleek Kitchen.
     """
-    , display_about = False
-    , display_contact = False
-    , display_menus = False
+    , display = NoDisplay
     , menu_dishes = Nothing
-    -- , menu_dishes = Menu "Breakfast" breakfast_dishes
     , menus = menus
     }
 
@@ -90,10 +95,22 @@ info =
 
 menus = 
     [ Menu "Breakfast" (Just breakfast_dishes)
+    , Menu "Lunch/Dinner" (Just dinner_dishes)
     ]
     
 breakfast_dishes =
     [ Dish "Potatoes" (Just "Choose either Aloo Dum (potato with gravy) or Aloo Soya (potato without gravy) - comes with your style egg, pan fried or depp fried puris (bread), and Tibetan or sweet tea.") Nothing
+    ]
+
+dinner_dishes =
+    [ Dish "Veggie Momo" Nothing (Just "photo/1.webp")
+    , Dish "Beef Momo" Nothing (Just "photo/2.webp")
+    , Dish "Beef or Chicken Curry" Nothing (Just "photo/3.webp")
+    , Dish "Chowmein" Nothing (Just "photo/4.webp")
+    , Dish "Aloo Dum" Nothing (Just "photo/5.webp")
+    , Dish "Chana" Nothing Nothing
+    , Dish "Chili (pork, chicken or beef)" Nothing Nothing
+    , Dish "Thukpa" Nothing (Just "photo/6.webp")
     ]
 
 -- UPDATE
@@ -101,24 +118,26 @@ breakfast_dishes =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        DisplayHamburgerItems ->
-            if model.hamburger_open == True then
-                let
-                    items = List.append model.display_hamburger ["About", "Contact", "Menu"]
-                in
-                    ( { model | display_hamburger = items, hamburger_open = False }, Cmd.none )
-            else
-                ( { model | display_hamburger = [], hamburger_open = True }, Cmd.none )
+        DisplayHamburgerItems msg ->
+            case msg of
+                Open ->
+                    let
+                        items = List.append model.display_hamburger ["About", "Contact", "Menu"]
+                    in
+                        ( { model | hamburger = Open, display_hamburger = items }, Cmd.none )
+                Closed ->
+                    ( { model | hamburger =  Closed, display_hamburger = [] }, Cmd.none )
 
         DisplayInfo msg ->
-            if msg == "About" then
-                ( { model | display_about = True, display_contact = False, display_menus = False }, Cmd.none )
-            else if msg == "Contact" then
-                ( { model | display_contact = True, display_about = False, display_menus = False }, Cmd.none )
-            else if msg == "Menu" then
-                ( { model | display_menus  = True, display_about = False, display_contact = False }, Cmd.none )
-            else
-                ( { model | display_menus  = False, display_about = False, display_contact = False }, Cmd.none )
+            case msg of
+                About ->
+                    ( { model | display = About }, Cmd.none )
+                Contact ->
+                    ( { model | display = Contact }, Cmd.none )
+                Menus ->
+                    ( { model | display = Menus }, Cmd.none )
+                NoDisplay ->
+                    ( { model | display = NoDisplay }, Cmd.none )
 
         ActiveMenu msg ->
             let
@@ -134,7 +153,7 @@ update msg model =
         None ->
             ( model , Cmd.none )
 
-menuItems: Menu -> Menu
+menuItems : Menu -> Menu
 menuItems menu =
     Menu menu.name menu.dishes
 
@@ -143,59 +162,69 @@ menuItems menu =
 view : Model -> Html Msg
 view model =
     div [ class "wrapper" ] [ header [] [ img [ class "header-img", src model.header_img ] [] ] 
-    , i [ class "hamburger fa fa-bars fa-3x", onClick (DisplayHamburgerItems) ] []
+    , i [ class "hamburger fa fa-bars fa-3x", onClick (DisplayHamburgerItems (toggleHamburger model.hamburger)) ] []
     , viewHamburgerItems model
-    , displayAbout model
-    , displayContact model
-    , displayMenuNames model
+    , displayInfo model
     , displayDishes model.menu_dishes
     , img [ class "img", src model.background_photo] []
     , displayFooter model
     ]
 
-viewHamburgerItems: Model -> Html Msg
+toggleHamburger : Hamburger -> Hamburger
+toggleHamburger hamburger =
+    case hamburger of
+        Open ->
+            Closed
+        Closed ->
+            Open
+
+viewHamburgerItems : Model -> Html Msg
 viewHamburgerItems model =
-    if model.hamburger_open == False then
-        div [ class "hamburger-items" ] (List.map item model.display_hamburger)
-    else
-        div [] []
+    case model.hamburger of
+        Open ->
+            div [ class "hamburger-items" ] (List.map item model.display_hamburger)
+        Closed ->
+            div [] []
 
-item: String -> Html Msg
+item : String -> Html Msg
 item s =
-    a [ href "#", class "hamburger-item", onClick (DisplayInfo s) ] [ text s ]
+    a [ href "#", class "hamburger-item", onClick (DisplayInfo (convertDisplayType s)) ] [ text s ]
 
-displayAbout: Model -> Html Msg
-displayAbout model =
-    if model.display_about == True then
-        Markdown.toHtml [ class "about" ] model.about
-    else
-        div [][]
+convertDisplayType : String -> Display
+convertDisplayType string =
+    case string of
+        "About" ->
+            About
+        "Contact" ->
+            Contact
+        "Menus" ->
+            Menus
+        _ ->
+            NoDisplay
 
-displayContact: Model -> Html Msg
-displayContact model =
-    if model.display_contact == True then
-        div [ class "contact" ] [ h1 [] [ text "Welcome!" ]
-        , div [] [ text "Please call us to place your pick-up order" ]
-        , div [] [ text model.contact_info.phone ]
-        ]
-    else
-        div [][]
+displayInfo : Model -> Html Msg
+displayInfo model =
+    case model.display of
+        About ->
+            Markdown.toHtml [ class "about" ] model.about
+        Contact ->
+            div [ class "contact" ] [ h1 [] [ text "Welcome!" ]
+            , div [] [ text "Please call us to place your pick-up order" ]
+            , div [] [ text model.contact_info.phone ]
+            ]
+        Menus ->
+            let
+                names = List.map .name model.menus
+            in
+                div [ class "menus" ] (List.map menuName names)
+        NoDisplay ->
+            div [] []
 
-displayMenuNames: Model -> Html Msg
-displayMenuNames model =
-    if model.display_menus == True then
-        let
-            names = List.map .name model.menus
-        in
-            div [ class "menus" ] (List.map menuName names)
-    else
-        div [][]
-
-menuName: String -> Html Msg
+menuName : String -> Html Msg
 menuName name =
     a [ href "#", class "menu", onClick (ActiveMenu name) ] [ text name ] 
 
-displayDishes: Maybe Menu -> Html Msg
+displayDishes : Maybe Menu -> Html Msg
 displayDishes menu =
     case menu of
         Just menu ->
@@ -210,7 +239,7 @@ displayDishes menu =
         Nothing ->
                 div [] []
 
-dish: Dish -> Html Msg
+dish : Dish -> Html Msg
 dish d =
     let
         name = d.name
@@ -222,7 +251,7 @@ dish d =
         , div [] [ text description ]
         ]
 
-dishDescription: Maybe String -> String
+dishDescription : Maybe String -> String
 dishDescription description =
     case description of
         Nothing ->
@@ -230,7 +259,7 @@ dishDescription description =
         Just description ->
             description
 
-dishPhoto: Maybe String -> String
+dishPhoto : Maybe String -> String
 dishPhoto photo =
     case photo of
         Nothing ->
@@ -238,7 +267,7 @@ dishPhoto photo =
         Just photo ->
             photo
 
-displayFooter: Model -> Html Msg
+displayFooter : Model -> Html Msg
 displayFooter model =
     footer [ class "footer", style [("background-color", model.footer_color)]] [ div [] [ text model.contact_info.address]
         , div [] [ text (model.contact_info.city ++ " " ++ model.contact_info.state ++ " " ++ model.contact_info.zip) ]

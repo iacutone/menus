@@ -8588,65 +8588,6 @@ var _user$project$Main$displayDishes = function (menu) {
 			{ctor: '[]'});
 	}
 };
-var _user$project$Main$displayContact = function (model) {
-	return _elm_lang$core$Native_Utils.eq(model.display_contact, true) ? A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('contact'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$h1,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Welcome!'),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('Please call us to place your pick-up order'),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(model.contact_info.phone),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
-			}
-		}) : A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		{ctor: '[]'});
-};
-var _user$project$Main$displayAbout = function (model) {
-	return _elm_lang$core$Native_Utils.eq(model.display_about, true) ? A2(
-		_evancz$elm_markdown$Markdown$toHtml,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('about'),
-			_1: {ctor: '[]'}
-		},
-		model.about) : A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		{ctor: '[]'});
-};
 var _user$project$Main$info = {address: '1500 Queen Street W.', city: 'Toronto', state: 'ON', zip: 'M6R 14A', hours: '8am to 9pm', phone: '416-551-0929', instagram: 'https://www.instagram.com/garleekkitchen', facebook: 'https://www.facebook.com/1142557119180556'};
 var _user$project$Main$Model = function (a) {
 	return function (b) {
@@ -8659,11 +8600,7 @@ var _user$project$Main$Model = function (a) {
 								return function (i) {
 									return function (j) {
 										return function (k) {
-											return function (l) {
-												return function (m) {
-													return {background_photo: a, header_img: b, sidebar_color: c, footer_color: d, contact_info: e, hamburger_open: f, display_hamburger: g, about: h, display_about: i, display_contact: j, display_menus: k, menus: l, menu_dishes: m};
-												};
-											};
+											return {background_photo: a, header_img: b, sidebar_color: c, footer_color: d, contact_info: e, hamburger: f, display_hamburger: g, about: h, display: i, menus: j, menu_dishes: k};
 										};
 									};
 								};
@@ -8682,107 +8619,6 @@ var _user$project$Main$Menu = F2(
 var _user$project$Main$menuItems = function (menu) {
 	return A2(_user$project$Main$Menu, menu.name, menu.dishes);
 };
-var _user$project$Main$update = F2(
-	function (msg, model) {
-		var _p4 = msg;
-		switch (_p4.ctor) {
-			case 'DisplayHamburgerItems':
-				if (_elm_lang$core$Native_Utils.eq(model.hamburger_open, true)) {
-					var items = A2(
-						_elm_lang$core$List$append,
-						model.display_hamburger,
-						{
-							ctor: '::',
-							_0: 'About',
-							_1: {
-								ctor: '::',
-								_0: 'Contact',
-								_1: {
-									ctor: '::',
-									_0: 'Menu',
-									_1: {ctor: '[]'}
-								}
-							}
-						});
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{display_hamburger: items, hamburger_open: false}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				} else {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{
-								display_hamburger: {ctor: '[]'},
-								hamburger_open: true
-							}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				}
-			case 'DisplayInfo':
-				var _p5 = _p4._0;
-				return _elm_lang$core$Native_Utils.eq(_p5, 'About') ? {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{display_about: true, display_contact: false, display_menus: false}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				} : (_elm_lang$core$Native_Utils.eq(_p5, 'Contact') ? {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{display_contact: true, display_about: false, display_menus: false}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				} : (_elm_lang$core$Native_Utils.eq(_p5, 'Menu') ? {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{display_menus: true, display_about: false, display_contact: false}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				} : {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{display_menus: false, display_about: false, display_contact: false}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				}));
-			case 'ActiveMenu':
-				var menu = A2(
-					_elm_lang$core$List$filter,
-					function (menu) {
-						return A2(_elm_lang$core$String$contains, _p4._0, menu.name);
-					},
-					model.menus);
-				var menu_items = _elm_lang$core$List$head(
-					A2(_elm_lang$core$List$map, _user$project$Main$menuItems, menu));
-				var _p6 = menu_items;
-				if (_p6.ctor === 'Just') {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{
-								menu_dishes: _elm_lang$core$Maybe$Just(_p6._0)
-							}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				} else {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{menu_dishes: _elm_lang$core$Maybe$Nothing}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				}
-			default:
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-		}
-	});
 var _user$project$Main$Dish = F3(
 	function (a, b, c) {
 		return {name: a, description: b, photo: c};
@@ -8796,30 +8632,78 @@ var _user$project$Main$breakfast_dishes = {
 		_elm_lang$core$Maybe$Nothing),
 	_1: {ctor: '[]'}
 };
+var _user$project$Main$dinner_dishes = {
+	ctor: '::',
+	_0: A3(
+		_user$project$Main$Dish,
+		'Veggie Momo',
+		_elm_lang$core$Maybe$Nothing,
+		_elm_lang$core$Maybe$Just('photo/1.webp')),
+	_1: {
+		ctor: '::',
+		_0: A3(
+			_user$project$Main$Dish,
+			'Beef Momo',
+			_elm_lang$core$Maybe$Nothing,
+			_elm_lang$core$Maybe$Just('photo/2.webp')),
+		_1: {
+			ctor: '::',
+			_0: A3(
+				_user$project$Main$Dish,
+				'Beef or Chicken Curry',
+				_elm_lang$core$Maybe$Nothing,
+				_elm_lang$core$Maybe$Just('photo/3.webp')),
+			_1: {
+				ctor: '::',
+				_0: A3(
+					_user$project$Main$Dish,
+					'Chowmein',
+					_elm_lang$core$Maybe$Nothing,
+					_elm_lang$core$Maybe$Just('photo/4.webp')),
+				_1: {
+					ctor: '::',
+					_0: A3(
+						_user$project$Main$Dish,
+						'Aloo Dum',
+						_elm_lang$core$Maybe$Nothing,
+						_elm_lang$core$Maybe$Just('photo/5.webp')),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Main$Dish, 'Chana', _elm_lang$core$Maybe$Nothing, _elm_lang$core$Maybe$Nothing),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Main$Dish, 'Chili (pork, chicken or beef)', _elm_lang$core$Maybe$Nothing, _elm_lang$core$Maybe$Nothing),
+							_1: {
+								ctor: '::',
+								_0: A3(
+									_user$project$Main$Dish,
+									'Thukpa',
+									_elm_lang$core$Maybe$Nothing,
+									_elm_lang$core$Maybe$Just('photo/6.webp')),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
 var _user$project$Main$menus = {
 	ctor: '::',
 	_0: A2(
 		_user$project$Main$Menu,
 		'Breakfast',
 		_elm_lang$core$Maybe$Just(_user$project$Main$breakfast_dishes)),
-	_1: {ctor: '[]'}
+	_1: {
+		ctor: '::',
+		_0: A2(
+			_user$project$Main$Menu,
+			'Lunch/Dinner',
+			_elm_lang$core$Maybe$Just(_user$project$Main$dinner_dishes)),
+		_1: {ctor: '[]'}
+	}
 };
-var _user$project$Main$initialModel = {
-	background_photo: 'photos/3-23-2018.JPG',
-	header_img: 'photos/garleek.png',
-	footer_color: '#F4FFFC',
-	sidebar_color: '#3F3E40',
-	contact_info: _user$project$Main$info,
-	hamburger_open: false,
-	display_hamburger: {ctor: '[]'},
-	about: '\nChef Tsering Phuntsok has experience in both western and eastern cuisine. Before professionally studying the art of cooking, young Tsering often went to his Grandmother’s place to watch her cook. His passion began by seeing her love of cooking and, when he was old enough, his Grandma taught him her secrets’.\n\n\nLater in his youth, Tsering joined Thrangu Rinpoche’s monastery. There, he mastered traditional Tibetan cuisine. While in the monastery, Tsering traveled to both Nepal and India, quickly mastering Nepalese and Indian flavors. Then in the early 2000’s, Tsering decided to leave the monastery and move to the United States where he continued to learn his culinary skills. Furthermore, while dating his now wife, Tsering cooked regularly with her first generation Italian family to master Italian pasta and sauces.\n\n\nTsering made his final move to Toronto in 2011 where he continued fine tuning his culinary skills and reinventing the flavors from his past. He decided to open Garleek to share his passion for food from around the world here in Toronto. You will find a unique, yet familiar, flavor in whatever dish you try at Garleek Kitchen.\n    ',
-	display_about: false,
-	display_contact: false,
-	display_menus: false,
-	menu_dishes: _elm_lang$core$Maybe$Nothing,
-	menus: _user$project$Main$menus
-};
-var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initialModel, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$ContactInfo = F8(
 	function (a, b, c, d, e, f, g, h) {
 		return {address: a, city: b, state: c, zip: d, hours: e, phone: f, instagram: g, facebook: h};
@@ -8851,31 +8735,104 @@ var _user$project$Main$menuName = function (name) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Main$displayMenuNames = function (model) {
-	if (_elm_lang$core$Native_Utils.eq(model.display_menus, true)) {
-		var names = A2(
-			_elm_lang$core$List$map,
-			function (_) {
-				return _.name;
-			},
-			model.menus);
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('menus'),
-				_1: {ctor: '[]'}
-			},
-			A2(_elm_lang$core$List$map, _user$project$Main$menuName, names));
-	} else {
-		return A2(
-			_elm_lang$html$Html$div,
-			{ctor: '[]'},
-			{ctor: '[]'});
+var _user$project$Main$displayInfo = function (model) {
+	var _p4 = model.display;
+	switch (_p4.ctor) {
+		case 'About':
+			return A2(
+				_evancz$elm_markdown$Markdown$toHtml,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('about'),
+					_1: {ctor: '[]'}
+				},
+				model.about);
+		case 'Contact':
+			return A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('contact'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$h1,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Welcome!'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Please call us to place your pick-up order'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(model.contact_info.phone),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				});
+		case 'Menus':
+			var names = A2(
+				_elm_lang$core$List$map,
+				function (_) {
+					return _.name;
+				},
+				model.menus);
+			return A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('menus'),
+					_1: {ctor: '[]'}
+				},
+				A2(_elm_lang$core$List$map, _user$project$Main$menuName, names));
+		default:
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '[]'});
 	}
 };
 var _user$project$Main$DisplayInfo = function (a) {
 	return {ctor: 'DisplayInfo', _0: a};
+};
+var _user$project$Main$DisplayHamburgerItems = function (a) {
+	return {ctor: 'DisplayHamburgerItems', _0: a};
+};
+var _user$project$Main$NoDisplay = {ctor: 'NoDisplay'};
+var _user$project$Main$Menus = {ctor: 'Menus'};
+var _user$project$Main$Contact = {ctor: 'Contact'};
+var _user$project$Main$About = {ctor: 'About'};
+var _user$project$Main$convertDisplayType = function (string) {
+	var _p5 = string;
+	switch (_p5) {
+		case 'About':
+			return _user$project$Main$About;
+		case 'Contact':
+			return _user$project$Main$Contact;
+		case 'Menus':
+			return _user$project$Main$Menus;
+		default:
+			return _user$project$Main$NoDisplay;
+	}
 };
 var _user$project$Main$item = function (s) {
 	return A2(
@@ -8889,7 +8846,8 @@ var _user$project$Main$item = function (s) {
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$html$Html_Events$onClick(
-						_user$project$Main$DisplayInfo(s)),
+						_user$project$Main$DisplayInfo(
+							_user$project$Main$convertDisplayType(s))),
 					_1: {ctor: '[]'}
 				}
 			}
@@ -8901,19 +8859,158 @@ var _user$project$Main$item = function (s) {
 		});
 };
 var _user$project$Main$viewHamburgerItems = function (model) {
-	return _elm_lang$core$Native_Utils.eq(model.hamburger_open, false) ? A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('hamburger-items'),
-			_1: {ctor: '[]'}
-		},
-		A2(_elm_lang$core$List$map, _user$project$Main$item, model.display_hamburger)) : A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		{ctor: '[]'});
+	var _p6 = model.hamburger;
+	if (_p6.ctor === 'Open') {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('hamburger-items'),
+				_1: {ctor: '[]'}
+			},
+			A2(_elm_lang$core$List$map, _user$project$Main$item, model.display_hamburger));
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{ctor: '[]'});
+	}
 };
-var _user$project$Main$DisplayHamburgerItems = {ctor: 'DisplayHamburgerItems'};
+var _user$project$Main$Closed = {ctor: 'Closed'};
+var _user$project$Main$initialModel = {
+	background_photo: 'photos/3-23-2018.JPG',
+	header_img: 'photos/garleek.png',
+	footer_color: '#F4FFFC',
+	sidebar_color: '#3F3E40',
+	contact_info: _user$project$Main$info,
+	hamburger: _user$project$Main$Closed,
+	display_hamburger: {ctor: '[]'},
+	about: '\nChef Tsering Phuntsok has experience in both western and eastern cuisine. Before professionally studying the art of cooking, young Tsering often went to his Grandmother’s place to watch her cook. His passion began by seeing her love of cooking and, when he was old enough, his Grandma taught him her secrets’.\n\n\nLater in his youth, Tsering joined Thrangu Rinpoche’s monastery. There, he mastered traditional Tibetan cuisine. While in the monastery, Tsering traveled to both Nepal and India, quickly mastering Nepalese and Indian flavors. Then in the early 2000’s, Tsering decided to leave the monastery and move to the United States where he continued to learn his culinary skills. Furthermore, while dating his now wife, Tsering cooked regularly with her first generation Italian family to master Italian pasta and sauces.\n\n\nTsering made his final move to Toronto in 2011 where he continued fine tuning his culinary skills and reinventing the flavors from his past. He decided to open Garleek to share his passion for food from around the world here in Toronto. You will find a unique, yet familiar, flavor in whatever dish you try at Garleek Kitchen.\n    ',
+	display: _user$project$Main$NoDisplay,
+	menu_dishes: _elm_lang$core$Maybe$Nothing,
+	menus: _user$project$Main$menus
+};
+var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initialModel, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$Main$Open = {ctor: 'Open'};
+var _user$project$Main$update = F2(
+	function (msg, model) {
+		var _p7 = msg;
+		switch (_p7.ctor) {
+			case 'DisplayHamburgerItems':
+				var _p8 = _p7._0;
+				if (_p8.ctor === 'Open') {
+					var items = A2(
+						_elm_lang$core$List$append,
+						model.display_hamburger,
+						{
+							ctor: '::',
+							_0: 'About',
+							_1: {
+								ctor: '::',
+								_0: 'Contact',
+								_1: {
+									ctor: '::',
+									_0: 'Menu',
+									_1: {ctor: '[]'}
+								}
+							}
+						});
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{hamburger: _user$project$Main$Open, display_hamburger: items}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								hamburger: _user$project$Main$Closed,
+								display_hamburger: {ctor: '[]'}
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			case 'DisplayInfo':
+				var _p9 = _p7._0;
+				switch (_p9.ctor) {
+					case 'About':
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{display: _user$project$Main$About}),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					case 'Contact':
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{display: _user$project$Main$Contact}),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					case 'Menus':
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{display: _user$project$Main$Menus}),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					default:
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{display: _user$project$Main$NoDisplay}),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+				}
+			case 'ActiveMenu':
+				var menu = A2(
+					_elm_lang$core$List$filter,
+					function (menu) {
+						return A2(_elm_lang$core$String$contains, _p7._0, menu.name);
+					},
+					model.menus);
+				var menu_items = _elm_lang$core$List$head(
+					A2(_elm_lang$core$List$map, _user$project$Main$menuItems, menu));
+				var _p10 = menu_items;
+				if (_p10.ctor === 'Just') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								menu_dishes: _elm_lang$core$Maybe$Just(_p10._0)
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{menu_dishes: _elm_lang$core$Maybe$Nothing}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
+var _user$project$Main$toggleHamburger = function (hamburger) {
+	var _p11 = hamburger;
+	if (_p11.ctor === 'Open') {
+		return _user$project$Main$Closed;
+	} else {
+		return _user$project$Main$Open;
+	}
+};
 var _user$project$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -8952,7 +9049,9 @@ var _user$project$Main$view = function (model) {
 						_0: _elm_lang$html$Html_Attributes$class('hamburger fa fa-bars fa-3x'),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$DisplayHamburgerItems),
+							_0: _elm_lang$html$Html_Events$onClick(
+								_user$project$Main$DisplayHamburgerItems(
+									_user$project$Main$toggleHamburger(model.hamburger))),
 							_1: {ctor: '[]'}
 						}
 					},
@@ -8962,36 +9061,28 @@ var _user$project$Main$view = function (model) {
 					_0: _user$project$Main$viewHamburgerItems(model),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Main$displayAbout(model),
+						_0: _user$project$Main$displayInfo(model),
 						_1: {
 							ctor: '::',
-							_0: _user$project$Main$displayContact(model),
+							_0: _user$project$Main$displayDishes(model.menu_dishes),
 							_1: {
 								ctor: '::',
-								_0: _user$project$Main$displayMenuNames(model),
-								_1: {
-									ctor: '::',
-									_0: _user$project$Main$displayDishes(model.menu_dishes),
-									_1: {
+								_0: A2(
+									_elm_lang$html$Html$img,
+									{
 										ctor: '::',
-										_0: A2(
-											_elm_lang$html$Html$img,
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$class('img'),
-												_1: {
-													ctor: '::',
-													_0: _elm_lang$html$Html_Attributes$src(model.background_photo),
-													_1: {ctor: '[]'}
-												}
-											},
-											{ctor: '[]'}),
+										_0: _elm_lang$html$Html_Attributes$class('img'),
 										_1: {
 											ctor: '::',
-											_0: _user$project$Main$displayFooter(model),
+											_0: _elm_lang$html$Html_Attributes$src(model.background_photo),
 											_1: {ctor: '[]'}
 										}
-									}
+									},
+									{ctor: '[]'}),
+								_1: {
+									ctor: '::',
+									_0: _user$project$Main$displayFooter(model),
+									_1: {ctor: '[]'}
 								}
 							}
 						}
