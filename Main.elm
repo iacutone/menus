@@ -8,16 +8,16 @@ import Markdown exposing (toHtml)
 -- MSG
 
 type Msg
-    = DisplayHamburgerItems Hamburger
-    | DisplayInfo Display
+    = ToggleHamburgerItems Hamburger
+    | HamburgerItemInfo HamburgerItems
     | ActiveMenu String
     | None
 
-type Display
+type HamburgerItems
     = About
     | Contact
     | Menus
-    | NoDisplay
+    | HamburgerClosed
 
 type Hamburger
     = Open
@@ -32,9 +32,8 @@ type alias Model =
     , footer_color : String
     , contact_info : ContactInfo
     , hamburger : Hamburger
-    , display_hamburger : List String
     , about : String
-    , display : Display
+    , hamburger_items : HamburgerItems
     , menus : List Menu
     , menu_dishes : Maybe Menu
     }
@@ -69,7 +68,6 @@ initialModel =
     , sidebar_color = "#3F3E40"
     , contact_info = info
     , hamburger = Closed
-    , display_hamburger = []
     , about = """
 Chef Tsering Phuntsok has experience in both western and eastern cuisine. Before professionally studying the art of cooking, young Tsering often went to his Grandmother’s place to watch her cook. His passion began by seeing her love of cooking and, when he was old enough, his Grandma taught him her secrets’.\n
 
@@ -77,7 +75,7 @@ Later in his youth, Tsering joined Thrangu Rinpoche’s monastery. There, he mas
 
 Tsering made his final move to Toronto in 2011 where he continued fine tuning his culinary skills and reinventing the flavors from his past. He decided to open Garleek to share his passion for food from around the world here in Toronto. You will find a unique, yet familiar, flavor in whatever dish you try at Garleek Kitchen.
     """
-    , display = NoDisplay
+    , hamburger_items = HamburgerClosed
     , menu_dishes = Nothing
     , menus = menus
     }
@@ -118,26 +116,27 @@ dinner_dishes =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        DisplayHamburgerItems msg ->
+        ToggleHamburgerItems msg ->
             case msg of
                 Open ->
-                    let
-                        items = List.append model.display_hamburger ["About", "Contact", "Menu"]
-                    in
-                        ( { model | hamburger = Open, display_hamburger = items }, Cmd.none )
-                Closed ->
-                    ( { model | hamburger =  Closed, display_hamburger = [] }, Cmd.none )
+                    ( { model | hamburger = Closed }, Cmd.none )
 
-        DisplayInfo msg ->
+                Closed ->
+                    ( { model | hamburger =  Open }, Cmd.none )
+
+        HamburgerItemInfo msg ->
             case msg of
                 About ->
-                    ( { model | display = About }, Cmd.none )
+                    ( { model | hamburger_items = About }, Cmd.none )
+
                 Contact ->
-                    ( { model | display = Contact }, Cmd.none )
+                    ( { model | hamburger_items = Contact }, Cmd.none )
+
                 Menus ->
-                    ( { model | display = Menus }, Cmd.none )
-                NoDisplay ->
-                    ( { model | display = NoDisplay }, Cmd.none )
+                    ( { model | hamburger_items = Menus }, Cmd.none )
+
+                HamburgerClosed ->
+                    ( { model | hamburger_items = HamburgerClosed }, Cmd.none )
 
         ActiveMenu msg ->
             let
@@ -147,6 +146,7 @@ update msg model =
                 case menu_items of
                     Just menu_items ->
                         ( { model | menu_dishes = Just menu_items }, Cmd.none )
+
                     Nothing ->
                         ( { model | menu_dishes = Nothing }, Cmd.none )
 
@@ -162,7 +162,7 @@ menuItems menu =
 view : Model -> Html Msg
 view model =
     div [ class "wrapper" ] [ header [] [ img [ class "header-img", src model.header_img ] [] ] 
-    , i [ class "hamburger fa fa-bars fa-3x", onClick (DisplayHamburgerItems (toggleHamburger model.hamburger)) ] []
+    , i [ class "hamburger fa fa-bars fa-3x", onClick (ToggleHamburgerItems model.hamburger) ] []
     , viewHamburgerItems model
     , displayInfo model
     , displayDishes model.menu_dishes
@@ -170,54 +170,52 @@ view model =
     , displayFooter model
     ]
 
-toggleHamburger : Hamburger -> Hamburger
-toggleHamburger hamburger =
-    case hamburger of
-        Open ->
-            Closed
-        Closed ->
-            Open
-
 viewHamburgerItems : Model -> Html Msg
 viewHamburgerItems model =
     case model.hamburger of
         Open ->
-            div [ class "hamburger-items" ] (List.map item model.display_hamburger)
+            div [ class "hamburger-items" ] (List.map item ["About", "Contact", "Menu"])
         Closed ->
             div [] []
 
 item : String -> Html Msg
 item s =
-    a [ href "#", class "hamburger-item", onClick (DisplayInfo (convertDisplayType s)) ] [ text s ]
+    a [ href "#", class "hamburger-item", onClick (HamburgerItemInfo (convertDisplayType s)) ] [ text s ]
 
-convertDisplayType : String -> Display
+convertDisplayType : String -> HamburgerItems
 convertDisplayType string =
     case string of
         "About" ->
             About
+
         "Contact" ->
             Contact
+
         "Menus" ->
             Menus
+
         _ ->
-            NoDisplay
+            HamburgerClosed
 
 displayInfo : Model -> Html Msg
 displayInfo model =
-    case model.display of
+    case model.hamburger_items of
         About ->
             Markdown.toHtml [ class "about" ] model.about
+
         Contact ->
             div [ class "contact" ] [ h1 [] [ text "Welcome!" ]
             , div [] [ text "Please call us to place your pick-up order" ]
             , div [] [ text model.contact_info.phone ]
             ]
+
         Menus ->
             let
                 names = List.map .name model.menus
             in
                 div [ class "menus" ] (List.map menuName names)
-        NoDisplay ->
+
+        HamburgerClosed ->
             div [] []
 
 menuName : String -> Html Msg
@@ -234,8 +232,10 @@ displayDishes menu =
                 case dishes of
                     Just dishes ->
                         div [ class "dishes" ] (List.map dish dishes)
+
                     Nothing ->
                         div [] []
+
         Nothing ->
                 div [] []
 
@@ -256,6 +256,7 @@ dishDescription description =
     case description of
         Nothing ->
             ""
+
         Just description ->
             description
 
@@ -264,6 +265,7 @@ dishPhoto photo =
     case photo of
         Nothing ->
             ""
+
         Just photo ->
             photo
 
