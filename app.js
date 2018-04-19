@@ -8599,7 +8599,7 @@ var _user$project$Main$Model = function (a) {
 							return function (h) {
 								return function (i) {
 									return function (j) {
-										return {background_photo: a, header_img: b, sidebar_color: c, footer_color: d, contact_info: e, hamburger: f, about: g, hamburger_items: h, menus: i, menu_dishes: j};
+										return {background_photo: a, header_img: b, sidebar_color: c, footer_color: d, contact_info: e, hamburger: f, about: g, hamburger_items: h, menus: i, active_menu: j};
 									};
 								};
 							};
@@ -8710,7 +8710,7 @@ var _user$project$Main$None = {ctor: 'None'};
 var _user$project$Main$ActiveMenu = function (a) {
 	return {ctor: 'ActiveMenu', _0: a};
 };
-var _user$project$Main$menuName = function (name) {
+var _user$project$Main$menuName = function (menu) {
 	return A2(
 		_elm_lang$html$Html$a,
 		{
@@ -8722,14 +8722,14 @@ var _user$project$Main$menuName = function (name) {
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$html$Html_Events$onClick(
-						_user$project$Main$ActiveMenu(name)),
+						_user$project$Main$ActiveMenu(menu)),
 					_1: {ctor: '[]'}
 				}
 			}
 		},
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html$text(name),
+			_0: _elm_lang$html$Html$text(menu.name),
 			_1: {ctor: '[]'}
 		});
 };
@@ -8788,12 +8788,6 @@ var _user$project$Main$displayInfo = function (model) {
 					}
 				});
 		case 'Menus':
-			var names = A2(
-				_elm_lang$core$List$map,
-				function (_) {
-					return _.name;
-				},
-				model.menus);
 			return A2(
 				_elm_lang$html$Html$div,
 				{
@@ -8801,7 +8795,7 @@ var _user$project$Main$displayInfo = function (model) {
 					_0: _elm_lang$html$Html_Attributes$class('menus'),
 					_1: {ctor: '[]'}
 				},
-				A2(_elm_lang$core$List$map, _user$project$Main$menuName, names));
+				A2(_elm_lang$core$List$map, _user$project$Main$menuName, model.menus));
 		default:
 			return A2(
 				_elm_lang$html$Html$div,
@@ -8877,7 +8871,7 @@ var _user$project$Main$viewHamburgerItems = function (model) {
 						_0: 'Contact',
 						_1: {
 							ctor: '::',
-							_0: 'Menu',
+							_0: 'Menus',
 							_1: {ctor: '[]'}
 						}
 					}
@@ -8941,7 +8935,7 @@ var _user$project$Main$view = function (model) {
 						_0: _user$project$Main$displayInfo(model),
 						_1: {
 							ctor: '::',
-							_0: _user$project$Main$displayDishes(model.menu_dishes),
+							_0: _user$project$Main$displayDishes(model.active_menu),
 							_1: {
 								ctor: '::',
 								_0: A2(
@@ -8969,7 +8963,7 @@ var _user$project$Main$view = function (model) {
 		});
 };
 var _user$project$Main$Closed = {ctor: 'Closed'};
-var _user$project$Main$initialModel = {background_photo: 'photos/3-23-2018.JPG', header_img: 'photos/garleek.png', footer_color: '#F4FFFC', sidebar_color: '#3F3E40', contact_info: _user$project$Main$info, hamburger: _user$project$Main$Closed, about: '\nChef Tsering Phuntsok has experience in both western and eastern cuisine. Before professionally studying the art of cooking, young Tsering often went to his Grandmother’s place to watch her cook. His passion began by seeing her love of cooking and, when he was old enough, his Grandma taught him her secrets’.\n\n\nLater in his youth, Tsering joined Thrangu Rinpoche’s monastery. There, he mastered traditional Tibetan cuisine. While in the monastery, Tsering traveled to both Nepal and India, quickly mastering Nepalese and Indian flavors. Then in the early 2000’s, Tsering decided to leave the monastery and move to the United States where he continued to learn his culinary skills. Furthermore, while dating his now wife, Tsering cooked regularly with her first generation Italian family to master Italian pasta and sauces.\n\n\nTsering made his final move to Toronto in 2011 where he continued fine tuning his culinary skills and reinventing the flavors from his past. He decided to open Garleek to share his passion for food from around the world here in Toronto. You will find a unique, yet familiar, flavor in whatever dish you try at Garleek Kitchen.\n    ', hamburger_items: _user$project$Main$HamburgerClosed, menu_dishes: _elm_lang$core$Maybe$Nothing, menus: _user$project$Main$menus};
+var _user$project$Main$initialModel = {background_photo: 'photos/3-23-2018.JPG', header_img: 'photos/garleek.png', footer_color: '#F4FFFC', sidebar_color: '#3F3E40', contact_info: _user$project$Main$info, hamburger: _user$project$Main$Closed, about: '\nChef Tsering Phuntsok has experience in both western and eastern cuisine. Before professionally studying the art of cooking, young Tsering often went to his Grandmother’s place to watch her cook. His passion began by seeing her love of cooking and, when he was old enough, his Grandma taught him her secrets’.\n\n\nLater in his youth, Tsering joined Thrangu Rinpoche’s monastery. There, he mastered traditional Tibetan cuisine. While in the monastery, Tsering traveled to both Nepal and India, quickly mastering Nepalese and Indian flavors. Then in the early 2000’s, Tsering decided to leave the monastery and move to the United States where he continued to learn his culinary skills. Furthermore, while dating his now wife, Tsering cooked regularly with her first generation Italian family to master Italian pasta and sauces.\n\n\nTsering made his final move to Toronto in 2011 where he continued fine tuning his culinary skills and reinventing the flavors from his past. He decided to open Garleek to share his passion for food from around the world here in Toronto. You will find a unique, yet familiar, flavor in whatever dish you try at Garleek Kitchen.\n    ', hamburger_items: _user$project$Main$HamburgerClosed, menus: _user$project$Main$menus, active_menu: _elm_lang$core$Maybe$Nothing};
 var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initialModel, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$Open = {ctor: 'Open'};
 var _user$project$Main$update = F2(
@@ -9032,34 +9026,15 @@ var _user$project$Main$update = F2(
 						};
 				}
 			case 'ActiveMenu':
-				var menu = A2(
-					_elm_lang$core$List$filter,
-					function (menu) {
-						return A2(_elm_lang$core$String$contains, _p7._0, menu.name);
-					},
-					model.menus);
-				var menu_items = _elm_lang$core$List$head(
-					A2(_elm_lang$core$List$map, _user$project$Main$menuItems, menu));
-				var _p10 = menu_items;
-				if (_p10.ctor === 'Just') {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{
-								menu_dishes: _elm_lang$core$Maybe$Just(_p10._0)
-							}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				} else {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{menu_dishes: _elm_lang$core$Maybe$Nothing}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				}
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							active_menu: _elm_lang$core$Maybe$Just(_p7._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			default:
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}

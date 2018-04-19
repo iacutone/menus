@@ -10,7 +10,7 @@ import Markdown exposing (toHtml)
 type Msg
     = ToggleHamburgerItems Hamburger
     | HamburgerItemInfo HamburgerItems
-    | ActiveMenu String
+    | ActiveMenu Menu
     | None
 
 type HamburgerItems
@@ -35,7 +35,7 @@ type alias Model =
     , about : String
     , hamburger_items : HamburgerItems
     , menus : List Menu
-    , menu_dishes : Maybe Menu
+    , active_menu : Maybe Menu
     }
 
 type alias Menu =
@@ -76,8 +76,8 @@ Later in his youth, Tsering joined Thrangu Rinpoche’s monastery. There, he mas
 Tsering made his final move to Toronto in 2011 where he continued fine tuning his culinary skills and reinventing the flavors from his past. He decided to open Garleek to share his passion for food from around the world here in Toronto. You will find a unique, yet familiar, flavor in whatever dish you try at Garleek Kitchen.
     """
     , hamburger_items = HamburgerClosed
-    , menu_dishes = Nothing
     , menus = menus
+    , active_menu = Nothing
     }
 
 info = 
@@ -139,16 +139,7 @@ update msg model =
                     ( { model | hamburger_items = HamburgerClosed }, Cmd.none )
 
         ActiveMenu msg ->
-            let
-               menu = List.filter (\menu -> String.contains msg menu.name) model.menus
-               menu_items = List.head (List.map menuItems menu)
-            in
-                case menu_items of
-                    Just menu_items ->
-                        ( { model | menu_dishes = Just menu_items }, Cmd.none )
-
-                    Nothing ->
-                        ( { model | menu_dishes = Nothing }, Cmd.none )
+            ( { model | active_menu = Just msg }, Cmd.none )
 
         None ->
             ( model , Cmd.none )
@@ -165,7 +156,7 @@ view model =
     , i [ class "hamburger fa fa-bars fa-3x", onClick (ToggleHamburgerItems model.hamburger) ] []
     , viewHamburgerItems model
     , displayInfo model
-    , displayDishes model.menu_dishes
+    , displayDishes model.active_menu
     , img [ class "img", src model.background_photo] []
     , displayFooter model
     ]
@@ -174,7 +165,7 @@ viewHamburgerItems : Model -> Html Msg
 viewHamburgerItems model =
     case model.hamburger of
         Open ->
-            div [ class "hamburger-items" ] (List.map item ["About", "Contact", "Menu"])
+            div [ class "hamburger-items" ] (List.map item ["About", "Contact", "Menus"])
         Closed ->
             div [] []
 
@@ -210,17 +201,14 @@ displayInfo model =
             ]
 
         Menus ->
-            let
-                names = List.map .name model.menus
-            in
-                div [ class "menus" ] (List.map menuName names)
+           div [ class "menus" ] (List.map menuName model.menus) 
 
         HamburgerClosed ->
             div [] []
 
-menuName : String -> Html Msg
-menuName name =
-    a [ href "#", class "menu", onClick (ActiveMenu name) ] [ text name ] 
+menuName : Menu -> Html Msg
+menuName menu =
+    a [ href "#", class "menu", onClick (ActiveMenu menu) ] [ text menu.name ] 
 
 displayDishes : Maybe Menu -> Html Msg
 displayDishes menu =
