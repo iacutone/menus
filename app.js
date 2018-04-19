@@ -8541,7 +8541,11 @@ var _user$project$Main$dish = function (d) {
 			ctor: '::',
 			_0: A2(
 				_elm_lang$html$Html$div,
-				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('dish-name'),
+					_1: {ctor: '[]'}
+				},
 				{
 					ctor: '::',
 					_0: _elm_lang$html$Html$text(name),
@@ -8551,13 +8555,32 @@ var _user$project$Main$dish = function (d) {
 				ctor: '::',
 				_0: A2(
 					_elm_lang$html$Html$div,
-					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('dish-description'),
+						_1: {ctor: '[]'}
+					},
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html$text(description),
 						_1: {ctor: '[]'}
 					}),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$img,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('dish-photo'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$src(photo),
+								_1: {ctor: '[]'}
+							}
+						},
+						{ctor: '[]'}),
+					_1: {ctor: '[]'}
+				}
 			}
 		});
 };
@@ -8636,35 +8659,35 @@ var _user$project$Main$dinner_dishes = {
 		_user$project$Main$Dish,
 		'Veggie Momo',
 		_elm_lang$core$Maybe$Nothing,
-		_elm_lang$core$Maybe$Just('photo/1.webp')),
+		_elm_lang$core$Maybe$Just('photos/1.webp')),
 	_1: {
 		ctor: '::',
 		_0: A3(
 			_user$project$Main$Dish,
 			'Beef Momo',
 			_elm_lang$core$Maybe$Nothing,
-			_elm_lang$core$Maybe$Just('photo/2.webp')),
+			_elm_lang$core$Maybe$Just('photos/2.webp')),
 		_1: {
 			ctor: '::',
 			_0: A3(
 				_user$project$Main$Dish,
 				'Beef or Chicken Curry',
 				_elm_lang$core$Maybe$Nothing,
-				_elm_lang$core$Maybe$Just('photo/3.webp')),
+				_elm_lang$core$Maybe$Just('photos/3.webp')),
 			_1: {
 				ctor: '::',
 				_0: A3(
 					_user$project$Main$Dish,
 					'Chowmein',
 					_elm_lang$core$Maybe$Nothing,
-					_elm_lang$core$Maybe$Just('photo/4.webp')),
+					_elm_lang$core$Maybe$Just('photos/4.webp')),
 				_1: {
 					ctor: '::',
 					_0: A3(
 						_user$project$Main$Dish,
 						'Aloo Dum',
 						_elm_lang$core$Maybe$Nothing,
-						_elm_lang$core$Maybe$Just('photo/5.webp')),
+						_elm_lang$core$Maybe$Just('photos/5.webp')),
 					_1: {
 						ctor: '::',
 						_0: A3(_user$project$Main$Dish, 'Chana', _elm_lang$core$Maybe$Nothing, _elm_lang$core$Maybe$Nothing),
@@ -8677,7 +8700,7 @@ var _user$project$Main$dinner_dishes = {
 									_user$project$Main$Dish,
 									'Thukpa',
 									_elm_lang$core$Maybe$Nothing,
-									_elm_lang$core$Maybe$Just('photo/6.webp')),
+									_elm_lang$core$Maybe$Just('photos/6.webp')),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -8850,8 +8873,8 @@ var _user$project$Main$item = function (s) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Main$viewHamburgerItems = function (model) {
-	var _p6 = model.hamburger;
+var _user$project$Main$viewHamburgerItems = function (items) {
+	var _p6 = items;
 	if (_p6.ctor === 'Open') {
 		return A2(
 			_elm_lang$html$Html$div,
@@ -8929,7 +8952,7 @@ var _user$project$Main$view = function (model) {
 					{ctor: '[]'}),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Main$viewHamburgerItems(model),
+					_0: _user$project$Main$viewHamburgerItems(model.hamburger),
 					_1: {
 						ctor: '::',
 						_0: _user$project$Main$displayInfo(model),

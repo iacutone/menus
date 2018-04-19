@@ -60,7 +60,7 @@ type alias ContactInfo =
     , facebook : String
     }
 
-initialModel  : Model
+initialModel : Model
 initialModel = 
     { background_photo = "photos/3-23-2018.JPG" 
     , header_img = "photos/garleek.png"
@@ -101,14 +101,14 @@ breakfast_dishes =
     ]
 
 dinner_dishes =
-    [ Dish "Veggie Momo" Nothing (Just "photo/1.webp")
-    , Dish "Beef Momo" Nothing (Just "photo/2.webp")
-    , Dish "Beef or Chicken Curry" Nothing (Just "photo/3.webp")
-    , Dish "Chowmein" Nothing (Just "photo/4.webp")
-    , Dish "Aloo Dum" Nothing (Just "photo/5.webp")
+    [ Dish "Veggie Momo" Nothing (Just "photos/1.webp")
+    , Dish "Beef Momo" Nothing (Just "photos/2.webp")
+    , Dish "Beef or Chicken Curry" Nothing (Just "photos/3.webp")
+    , Dish "Chowmein" Nothing (Just "photos/4.webp")
+    , Dish "Aloo Dum" Nothing (Just "photos/5.webp")
     , Dish "Chana" Nothing Nothing
     , Dish "Chili (pork, chicken or beef)" Nothing Nothing
-    , Dish "Thukpa" Nothing (Just "photo/6.webp")
+    , Dish "Thukpa" Nothing (Just "photos/6.webp")
     ]
 
 -- UPDATE
@@ -154,16 +154,16 @@ view : Model -> Html Msg
 view model =
     div [ class "wrapper" ] [ header [] [ img [ class "header-img", src model.header_img ] [] ] 
     , i [ class "hamburger fa fa-bars fa-3x", onClick (ToggleHamburgerItems model.hamburger) ] []
-    , viewHamburgerItems model
+    , viewHamburgerItems model.hamburger
     , displayInfo model
     , displayDishes model.active_menu
     , img [ class "img", src model.background_photo] []
     , displayFooter model
     ]
 
-viewHamburgerItems : Model -> Html Msg
-viewHamburgerItems model =
-    case model.hamburger of
+viewHamburgerItems : Hamburger -> Html Msg
+viewHamburgerItems items =
+    case items of
         Open ->
             div [ class "hamburger-items" ] (List.map item ["About", "Contact", "Menus"])
         Closed ->
@@ -235,8 +235,9 @@ dish d =
         photo = dishPhoto d.photo
     in
 
-        div [ class "dish" ] [ div [] [ text name ]
-        , div [] [ text description ]
+        div [ class "dish" ] [ div [ class "dish-name" ] [ text name ]
+        , div [ class "dish-description" ] [ text description ]
+        , img [ class "dish-photo", src photo] []
         ]
 
 dishDescription : Maybe String -> String
