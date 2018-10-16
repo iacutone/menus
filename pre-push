@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+cp -R css/ build/css
+cp -R fonts/ build/fonts
+cp css/style.css build/style.css
+cp app.js build/app.js
+cp index.html build/index.html
+
+s3cmd sync --recursive build/ s3://garleek
+echo -e "\t Successfully deployed to S3"
