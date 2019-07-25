@@ -1,11 +1,15 @@
-module Main exposing (..)
+module Main exposing (ContactInfo, Dish, Hamburger(..), HamburgerItems(..), Menu, Model, Msg(..), breakfast_dishes, convertDisplayType, dinner_dishes, dish, dishDescription, dishPhoto, displayDishes, displayFooter, displayInfo, hamburgItem, info, initialModel, main, menuItems, menuName, menus, update, view, viewHamburgerItems)
 
+import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, onClick, onInput)
 import Markdown exposing (toHtml)
 
+
+
 -- MSG
+
 
 type Msg
     = ToggleHamburgerItems Hamburger
@@ -13,19 +17,24 @@ type Msg
     | ActiveMenu Menu
     | None
 
+
 type HamburgerItems
     = About
     | Contact
     | Menus
     | HamburgerClosed
 
+
 type Hamburger
     = Open
     | Closed
 
+
+
 -- MODEL
 
-type alias Model = 
+
+type alias Model =
     { background_photo : String
     , header_img : String
     , sidebar_color : String
@@ -38,16 +47,19 @@ type alias Model =
     , active_menu : Maybe Menu
     }
 
+
 type alias Menu =
     { name : String
     , dishes : Maybe (List Dish)
     }
+
 
 type alias Dish =
     { name : String
     , description : Maybe String
     , photo : Maybe String
     }
+
 
 type alias ContactInfo =
     { address : String
@@ -60,27 +72,36 @@ type alias ContactInfo =
     , facebook : String
     }
 
-initialModel : Model
-initialModel = 
-    { background_photo = "photos/3-23-2018.JPG" 
-    , header_img = "photos/garleek.png"
-    , footer_color = "#F4FFFC"
-    , sidebar_color = "#3F3E40"
-    , contact_info = info
-    , hamburger = Closed
-    , about = """
-Chef Tsering Phuntsok has experience in both western and eastern cuisine. Before professionally studying the art of cooking, young Tsering often went to his Grandmother’s place to watch her cook. His passion began by seeing her love of cooking and, when he was old enough, his Grandma taught him her secrets’.\n
 
-Later in his youth, Tsering joined Thrangu Rinpoche’s monastery. There, he mastered traditional Tibetan cuisine. While in the monastery, Tsering traveled to both Nepal and India, quickly mastering Nepalese and Indian flavors. Then in the early 2000’s, Tsering decided to leave the monastery and move to the United States where he continued to learn his culinary skills. Furthermore, while dating his now wife, Tsering cooked regularly with her first generation Italian family to master Italian pasta and sauces.\n
+
+-- intialModel : () -> ( Model, Cmd Msg )
+
+
+initialModel =
+    ( { background_photo = "photos/3-23-2018.JPG"
+      , header_img = "photos/garleek.png"
+      , footer_color = "#F4FFFC"
+      , sidebar_color = "#3F3E40"
+      , contact_info = info
+      , hamburger = Closed
+      , about = """
+Chef Tsering Phuntsok has experience in both western and eastern cuisine. Before professionally studying the art of cooking, young Tsering often went to his Grandmother’s place to watch her cook. His passion began by seeing her love of cooking and, when he was old enough, his Grandma taught him her secrets’.
+
+
+Later in his youth, Tsering joined Thrangu Rinpoche’s monastery. There, he mastered traditional Tibetan cuisine. While in the monastery, Tsering traveled to both Nepal and India, quickly mastering Nepalese and Indian flavors. Then in the early 2000’s, Tsering decided to leave the monastery and move to the United States where he continued to learn his culinary skills. Furthermore, while dating his now wife, Tsering cooked regularly with her first generation Italian family to master Italian pasta and sauces.
+
 
 Tsering made his final move to Toronto in 2011 where he continued fine tuning his culinary skills and reinventing the flavors from his past. He decided to open Garleek to share his passion for food from around the world here in Toronto. You will find a unique, yet familiar, flavor in whatever dish you try at Garleek Kitchen.
     """
-    , hamburger_items = HamburgerClosed
-    , menus = menus
-    , active_menu = Nothing
-    }
+      , hamburger_items = HamburgerClosed
+      , menus = menus
+      , active_menu = Nothing
+      }
+    , Cmd.none
+    )
 
-info = 
+
+info =
     { address = "1500 Queen Street W."
     , city = "Toronto"
     , state = "ON"
@@ -91,14 +112,17 @@ info =
     , facebook = "https://www.facebook.com/1142557119180556"
     }
 
-menus = 
+
+menus =
     [ Menu "Breakfast" (Just breakfast_dishes)
     , Menu "Lunch/Dinner" (Just dinner_dishes)
     ]
-    
+
+
 breakfast_dishes =
     [ Dish "Potatoes" (Just "Choose either Aloo Dum (potato with gravy) or Aloo Soya (potato without gravy) - comes with your style egg, pan fried or depp fried puris (bread), and Tibetan or sweet tea.") Nothing
     ]
+
 
 dinner_dishes =
     [ Dish "Veggie Momo" Nothing (Just "photos/1.webp")
@@ -111,21 +135,24 @@ dinner_dishes =
     , Dish "Thukpa" Nothing (Just "photos/6.webp")
     ]
 
+
+
 -- UPDATE
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ToggleHamburgerItems msg ->
-            case msg of
+        ToggleHamburgerItems ham ->
+            case ham of
                 Open ->
                     ( { model | hamburger = Closed }, Cmd.none )
 
                 Closed ->
-                    ( { model | hamburger =  Open }, Cmd.none )
+                    ( { model | hamburger = Open }, Cmd.none )
 
-        HamburgerItemInfo msg ->
-            case msg of
+        HamburgerItemInfo items ->
+            case items of
                 About ->
                     ( { model | hamburger_items = About }, Cmd.none )
 
@@ -138,40 +165,49 @@ update msg model =
                 HamburgerClosed ->
                     ( { model | hamburger_items = HamburgerClosed }, Cmd.none )
 
-        ActiveMenu msg ->
-            ( { model | active_menu = Just msg }, Cmd.none )
+        ActiveMenu active ->
+            ( { model | active_menu = Just active }, Cmd.none )
 
         None ->
-            ( model , Cmd.none )
+            ( model, Cmd.none )
+
 
 menuItems : Menu -> Menu
 menuItems menu =
     Menu menu.name menu.dishes
 
+
+
 -- VIEW
+
 
 view : Model -> Html Msg
 view model =
-    div [ class "wrapper" ] [ header [] [ img [ class "header-img", src model.header_img ] [] ] 
-    , i [ class "hamburger fa fa-bars fa-3x", onClick (ToggleHamburgerItems model.hamburger) ] []
-    , viewHamburgerItems model.hamburger
-    , displayInfo model
-    , displayDishes model.active_menu
-    , img [ class "img", src model.background_photo] []
-    , displayFooter model
-    ]
+    div [ class "wrapper" ]
+        [ header [] [ img [ class "header-img", src model.header_img ] [] ]
+        , i [ class "hamburger fa fa-bars fa-3x", onClick (ToggleHamburgerItems model.hamburger) ] []
+        , viewHamburgerItems model.hamburger
+        , displayInfo model
+        , displayDishes model.active_menu
+        , img [ class "img", src model.background_photo ] []
+        , displayFooter model
+        ]
+
 
 viewHamburgerItems : Hamburger -> Html Msg
 viewHamburgerItems items =
     case items of
         Open ->
-            div [ class "hamburger-items" ] (List.map item ["About", "Contact", "Menus"])
+            div [ class "hamburger-items" ] (List.map hamburgItem [ "About", "Contact", "Menus" ])
+
         Closed ->
             div [] []
 
-item : String -> Html Msg
-item s =
+
+hamburgItem : String -> Html Msg
+hamburgItem s =
     a [ href "#", class "hamburger-item", onClick (HamburgerItemInfo (convertDisplayType s)) ] [ text s ]
+
 
 convertDisplayType : String -> HamburgerItems
 convertDisplayType string =
@@ -188,6 +224,7 @@ convertDisplayType string =
         _ ->
             HamburgerClosed
 
+
 displayInfo : Model -> Html Msg
 displayInfo model =
     case model.hamburger_items of
@@ -195,50 +232,61 @@ displayInfo model =
             Markdown.toHtml [ class "about" ] model.about
 
         Contact ->
-            div [ class "contact" ] [ h1 [] [ text "Welcome!" ]
-            , div [] [ text "Please call us to place your pick-up order" ]
-            , div [] [ text model.contact_info.phone ]
-            ]
+            div [ class "contact" ]
+                [ h1 [] [ text "Welcome!" ]
+                , div [] [ text "Please call us to place your pick-up order" ]
+                , div [] [ text model.contact_info.phone ]
+                ]
 
         Menus ->
-           div [ class "menus" ] (List.map menuName model.menus) 
+            div [ class "menus" ] (List.map menuName model.menus)
 
         HamburgerClosed ->
             div [] []
 
+
 menuName : Menu -> Html Msg
 menuName menu =
-    a [ href "#", class "menu", onClick (ActiveMenu menu) ] [ text menu.name ] 
+    a [ href "#", class "menu", onClick (ActiveMenu menu) ] [ text menu.name ]
+
 
 displayDishes : Maybe Menu -> Html Msg
 displayDishes menu =
     case menu of
-        Just menu ->
+        Just aMenu ->
             let
-                dishes = menu.dishes
+                dishes =
+                    aMenu.dishes
             in
-                case dishes of
-                    Just dishes ->
-                        div [ class "dishes" ] (List.map dish dishes)
+            case dishes of
+                Just someDishes ->
+                    div [ class "dishes" ] (List.map dish someDishes)
 
-                    Nothing ->
-                        div [] []
+                Nothing ->
+                    div [] []
 
         Nothing ->
-                div [] []
+            div [] []
+
 
 dish : Dish -> Html Msg
 dish d =
     let
-        name = d.name
-        description = dishDescription d.description
-        photo = dishPhoto d.photo
-    in
+        name =
+            d.name
 
-        div [ class "dish" ] [ div [ class "dish-name" ] [ text name ]
+        description =
+            dishDescription d.description
+
+        photo =
+            dishPhoto d.photo
+    in
+    div [ class "dish" ]
+        [ div [ class "dish-name" ] [ text name ]
         , div [ class "dish-description" ] [ text description ]
-        , img [ class "dish-photo", src photo] []
+        , img [ class "dish-photo", src photo ] []
         ]
+
 
 dishDescription : Maybe String -> String
 dishDescription description =
@@ -246,8 +294,9 @@ dishDescription description =
         Nothing ->
             ""
 
-        Just description ->
-            description
+        Just desc ->
+            desc
+
 
 dishPhoto : Maybe String -> String
 dishPhoto photo =
@@ -255,27 +304,25 @@ dishPhoto photo =
         Nothing ->
             ""
 
-        Just photo ->
-            photo
+        Just p ->
+            p
+
 
 displayFooter : Model -> Html Msg
 displayFooter model =
-    footer [ class "footer", style [("background-color", model.footer_color)]] [ div [] [ text model.contact_info.address]
+    footer [ class "footer", style "background-color" model.footer_color ]
+        [ div [] [ text model.contact_info.address ]
         , div [] [ text (model.contact_info.city ++ " " ++ model.contact_info.state ++ " " ++ model.contact_info.zip) ]
         , div [] [ text ("Open everyday" ++ " " ++ model.contact_info.hours) ]
-        , a [ href model.contact_info.facebook ] [ i [ class "social-media-icon fa fa-facebook fa-2x" ] []]
-        , a [ href model.contact_info.instagram ] [ i [ class "social-media-icon fa fa-instagram fa-2x" ] []]]
+        , a [ href model.contact_info.facebook ] [ i [ class "social-media-icon fa fa-facebook fa-2x" ] [] ]
+        , a [ href model.contact_info.instagram ] [ i [ class "social-media-icon fa fa-instagram fa-2x" ] [] ]
+        ]
 
-init : (Model, Cmd Msg)
-init =
-    ( initialModel, Cmd.none )
 
-main : Program Never Model Msg
 main =
-    Html.program
-        { init = init
-        , view = view
+    Browser.element
+        { init = \() -> initialModel
         , update = update
-        , subscriptions = (always Sub.none)
+        , subscriptions = always Sub.none
+        , view = view
         }
-

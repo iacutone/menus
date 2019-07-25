@@ -12,9 +12,9 @@
   <body>
     <div id="container"></div>
     <script>
-      var elm = document.getElementById('container');
-
-      app = Elm.Main.embed(elm);
+      var app = Elm.Main.init({
+        node: document.getElementById('container')
+      });
     </script>
   </body>
 </html>
